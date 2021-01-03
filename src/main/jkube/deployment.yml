@@ -1,0 +1,49 @@
+spec:
+  selector:
+    matchLabels:
+      app: ${project.artifactId}
+  replicas: 2
+  strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: ${project.artifactId}
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: ${project.artifactId}
+            items:
+              - key: application.properties
+                path: application.properties
+      containers:
+        - name: ${project.artifactId}
+          image: ${project.artifactId}
+          imagePullPolicy: Never
+          ports:
+            - containerPort: ${jkube.enricher.jkube-service.port}
+          resources:
+            limits:
+              cpu: ${jkube.configuratioon.resources.limit.cpu}
+              memory: ${jkube.configuratioon.resources.limit.memory}
+            requests:
+              cpu: ${jkube.configuratioon.resources.initial.cpu}
+              memory: ${jkube.configuratioon.resources.initial.memory}
+          readinessProbe:
+            httpGet:
+              path: ${jkube.configuratioon.health-check-path}
+              port: ${jkube.enricher.jkube-service.port}
+              initialDelaySeconds: 5
+              periodSeconds: 5
+              successThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: ${jkube.configuratioon.health-check-path}
+              port: ${jkube.enricher.jkube-service.port}
+              initialDelaySeconds: 5
+              periodSeconds: 5
+              successThreshold: 1

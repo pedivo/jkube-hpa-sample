@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>do.machadoneves.pedro</groupId>
+    <artifactId>jkube-sample</artifactId>
+    <version>0.0.1</version>
+    <name>Sample Jkube Project</name>
+    <description>Basic JKube implementation using external resources and hpa</description>
+
+    <properties>
+        <java.version>11</java.version>
+        <jkube.version>1.0.2</jkube.version>
+        <jkube.enricher.jkube-service.port>8080</jkube.enricher.jkube-service.port>
+        <jkube.enricher.jkube-service.node-port>30001</jkube.enricher.jkube-service.node-port>
+        <jkube.enricher.jkube-service.type>NodePort</jkube.enricher.jkube-service.type>
+        <jkube.configuratioon.min-replicas>2</jkube.configuratioon.min-replicas>
+        <jkube.configuratioon.max-replicas>10</jkube.configuratioon.max-replicas>
+        <jkube.configuratioon.scale.cpu-usage>70</jkube.configuratioon.scale.cpu-usage>
+        <jkube.configuratioon.scale.memory-usage>70</jkube.configuratioon.scale.memory-usage>
+        <jkube.configuratioon.resources.limit.cpu>1000m</jkube.configuratioon.resources.limit.cpu>
+        <jkube.configuratioon.resources.limit.memory>2Gi</jkube.configuratioon.resources.limit.memory>
+        <jkube.configuratioon.resources.initial.cpu>300m</jkube.configuratioon.resources.initial.cpu>
+        <jkube.configuratioon.resources.initial.memory>128Mi</jkube.configuratioon.resources.initial.memory>
+        <jkube.configuratioon.health-check-path>/actuator/health</jkube.configuratioon.health-check-path>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jkube</groupId>
+                <artifactId>kubernetes-maven-plugin</artifactId>
+                <version>${jkube.version}</version>
+                <configuration>
+                    <namespace>dev</namespace>
+                    <images>
+                        <image>
+                            <name>demo</name>
+                            <alias>demo</alias>
+                            <build>
+                                <from>adoptopenjdk:11-jre-hotspot</from>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <cmd>java -jar maven/${project.name}-${project.version}.jar</cmd>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

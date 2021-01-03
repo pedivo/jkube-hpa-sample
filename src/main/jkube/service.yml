@@ -1,0 +1,10 @@
+metadata:
+  name: ${project.artifactId}
+spec:
+  selector:
+    app: ${project.artifactId}
+  ports:
+    - protocol: TCP
+      port: ${jkube.enricher.jkube-service.port}
+      nodePort: ${jkube.enricher.jkube-service.node-port}
+  type: NodePort

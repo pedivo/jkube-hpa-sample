@@ -1,0 +1,5 @@
+FROM adoptopenjdk:11-jre-hotspot
+RUN mkdir /opt/app
+COPY maven/target/*.jar /opt/app/app.jar
+EXPOSE 8080
+CMD ["java", "-jar", "/opt/app/app.jar"]
